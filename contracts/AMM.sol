@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./Token.sol";
 
-
+// AMM will do the following:
 // [X] Manage Poll
 // [X] Manage Deposits
 // {X] Facilitates Swaps (i.e. Trades)
-// [] Manage Withdraws
+// [X] Manage Withdraws
 
 contract AMM {
     Token public token1;
@@ -21,7 +21,6 @@ contract AMM {
     mapping (address => uint256) public shares; // mapping to deternine how many shares each individual has
     uint256 constant PRECISION = 10**18; // adding 18 0's for conversion
 
-
     // EVENTS
     event Swap(
         address user,
@@ -32,8 +31,7 @@ contract AMM {
         uint256 token1Balance,
         uint256 token2Balance,
         uint256 timestamp
-    );
-    
+    );    
     
     constructor(Token _token1, Token _token2) {
         token1 = _token1;
@@ -176,5 +174,33 @@ contract AMM {
             token2Balance,      // token2Balance
             block.timestamp     // timestamp
         );       
+    }
+
+    // Determine how many tokens will be withdrawn
+    function calculateWithdrawAmount(uint256 _share) public view returns (uint256 token1Amount, uint256 token2Amount) {
+        require(_share <= totalShares, "must be less that total shares");
+        token1Amount = (_share * token1Balance) / totalShares;
+        token2Amount = (_share * token2Balance) / totalShares;
+    }
+
+    // Removes liquidity from the pool
+    function removeLiquidity(uint256 _share) external returns(uint256 token1Amount, uint256 token2Amount) {        
+        require (_share <= shares[msg.sender],  // check mapping to make sure they are taking the shares they are entitled to
+        "cannot withdraw more shares than you have"
+        );
+
+        (token1Amount, token2Amount) = calculateWithdrawAmount(_share);
+
+        shares[msg.sender] -= _share;
+        totalShares -= _share;
+
+        // Update state vars in contract
+        token1Balance -= token1Amount;
+        token2Balance -= token2Amount;
+        K = token1Balance * token2Balance;
+
+        // transfer tokens back to the user
+        token1.transfer(msg.sender, token1Amount);
+        token2.transfer(msg.sender, token2Amount);
     }
 }

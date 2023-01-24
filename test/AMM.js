@@ -6,6 +6,7 @@ const tokens = (n) => {
 }
 
 const ether = tokens
+const shares = ether
 
 describe('AMM', () => {
     // Accounts
@@ -287,10 +288,42 @@ describe('AMM', () => {
       expect(await token2.balanceOf(amm.address)).to.equal(await amm.token2Balance())
 
       // Check Price after swapping -- token2Balance/token1Balance
-      console.log(`Price: ${await amm.token2Balance() / await amm.token1Balance()} \n`)    
+      console.log(`Price: ${await amm.token2Balance() / await amm.token1Balance()} \n`)
 
-    })    
+      /////////////////////////////////////////////////////////////////////////////////
+      // Removing Liquidity
+      //
+    
+      // Get current AMM Pool Balance 
+      console.log(`AMM Token1 Balance: ${ethers.utils.formatEther(await amm.token1Balance())} \n`)
+      console.log(`AMM Token2 Balance: ${ethers.utils.formatEther(await amm.token2Balance())} \n`)
 
-  })
- 
+      // Check LP balance before removing tokens
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance before removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token2 balance before removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      // LP removes tokens from AMM Pool
+      transaction = await amm.connect(liquidityProvider).removeLiquidity(shares(50)) // 50 Shares
+      await transaction.wait()
+
+      // Check LP balance after removing funds
+      balance = await token1.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token1 balance after removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      balance = await token2.balanceOf(liquidityProvider.address)
+      console.log(`Liquidity Provider Token2 balance after removing funds: ${ethers.utils.formatEther(balance)} \n`)
+
+      // LP should have 0 shares
+      expect(await amm.shares(liquidityProvider.address)).to.equal(0)
+
+      // Deployer should have 100 shares
+      expect(await amm.shares(deployer.address)).to.equal(shares(100))
+      
+      // AMM Pool has 100 total shares
+      expect(await amm.totalShares()).to.equal(shares(100))
+    })
+  }) 
 })
