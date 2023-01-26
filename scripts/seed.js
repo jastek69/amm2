@@ -100,6 +100,7 @@ async function main() {
     // Investor swaps 1 token
     transaction = await amm.connect(investor1).swapToken1(tokens(1))
     await transaction.wait()
+    
 
     /////////////////////////////////////////////////////////////////////////////////
     // Investor 2 Swaps: USD --> Sobek
