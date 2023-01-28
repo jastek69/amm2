@@ -7,14 +7,21 @@ import { ethers } from 'ethers'
 import Navigation from './Navigation';
 import Loading from './Loading';
 
-import { loadProvider, loadNetwork, loadAccount,  } from '../store/interactions'
+import { setAccount } from '../store/reducers/provider';
+
+import {
+  loadProvider,
+  loadNetwork,
+  loadAccount,
+  loadTokens,
+  loadAMM
+  } from '../store/interactions'
 
 // ABIs: Import your contract ABIs here
-import TOKEN_ABI from '../abis/Token.json'
+// moved to interactions.js
 
 // Config: Import your network config here
-import config from '../config.json';
-
+// moved to interactions.js
 
 function App() {
   
@@ -24,10 +31,20 @@ function App() {
     // Initiate provider
     const provider = await loadProvider(dispatch)
 
+    // Fetch current networks chainId
     const chainId = await loadNetwork(provider, dispatch)
 
-    // Fetch accounts - moved to interactions
-    await loadAccount(dispatch)      
+    // Fetch accounts from Metamask - moved to interactions
+    await loadAccount(dispatch)
+
+    // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts '})
+    // const account = ethers.utils.getAddress(accounts[0])
+    // dispatch(setAccount(account))
+
+    
+    // Initiate contract
+    await loadTokens(provider, chainId, dispatch)
+    await loadAMM(provider, chainId, dispatch)
   }
 
   useEffect(() => {

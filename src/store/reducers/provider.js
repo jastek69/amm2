@@ -15,7 +15,7 @@ export const provider = createSlice({ // creates the actions
         setNetwork: (state, action) => {
             state.chainId = action.payload
         },
-        setAccount: (state, action) => { // tells REdux what happens whenever we set an account
+        setAccount: (state, action) => { // tells Redux what happens whenever we set an account
             state.account = action.payload
         }
     }
