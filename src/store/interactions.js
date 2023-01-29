@@ -37,7 +37,6 @@ export const loadNetwork = async (provider, dispatch) => {
     return chainId
 }
 
-
 export const loadAccount = async (dispatch) => {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     const account = ethers.utils.getAddress(accounts[0])
@@ -63,7 +62,6 @@ export const loadAMM = async (provider, chainId, dispatch) => {
     
     return amm
 }
-
 
 
 // -------------------------------------------------------------------------------------------
