@@ -10,11 +10,12 @@ import {
 import {
     setContracts,
     setSymbols,
-    balancesLoaded
+    balancesLoaded    
     } from './reducers/tokens'
 
     import {
-        setContract        
+        setContract,
+        sharesLoaded   
     } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json';
@@ -67,12 +68,17 @@ export const loadAMM = async (provider, chainId, dispatch) => {
 
 // -------------------------------------------------------------------------------------------
 // LOAD BALANCES & SHARES
-export const loadBalances = async (tokens, account, dispatch) => {
+export const loadBalances = async (amm, tokens, account, dispatch) => {
     const balance1 = await tokens[0].balanceOf(account)
     const balance2 = await tokens[1].balanceOf(account)
 
-    dispatch(balancesLoaded(
-        balance1,
-        balance2
-    ))
+    dispatch(balancesLoaded([
+        ethers.utils.formatUnits(balance1.toString(), 'ether'),
+        ethers.utils.formatUnits(balance2.toString(), 'ether')
+    ]))
+
+    const shares = await amm.shares(account) // ERROR - Uncaught (in promise) TypeError: amm.shares is not a function
+                                            // at loadBalances (bundle.js:680:28)
+                                            // at async connectHandler (bundle.js:283:5)
+    dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
 }

@@ -27,20 +27,25 @@ function App() {
   
   const dispatch = useDispatch() // hook to useDispatch function
 
-  const loadBlockchainData = async () => { // moved to interactions
+  const loadBlockchainData = async () => { // see interactions
     // Initiate provider
     const provider = await loadProvider(dispatch)
 
-    // Fetch current networks chainId
+
+    // Fetch current networks chainId (e.g. hard 31337)
     const chainId = await loadNetwork(provider, dispatch)
 
-    // Fetch accounts from Metamask - moved to interactions
-    await loadAccount(dispatch)
+    // Reload page when network changes
+    window.ethereum.on('chainChanged', () => {
+      window.location.reload()
+    })
 
-    // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts '})
-    // const account = ethers.utils.getAddress(accounts[0])
-    // dispatch(setAccount(account))
 
+    // Fetch accounts from MetaMask when changed - see interactions
+    window.ethereum.on('accountsChanged', async () => {
+      console.log("account changed")
+      await loadAccount(dispatch)
+    })
     
     // Initiate contract
     await loadTokens(provider, chainId, dispatch)
@@ -53,7 +58,7 @@ function App() {
 
   return(
     <Container>
-      <Navigation account={'0x0...'} />
+      <Navigation />
 
       <h1 className='my-4 text-center'>React Hardhat Template</h1>
 

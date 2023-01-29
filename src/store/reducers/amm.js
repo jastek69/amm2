@@ -11,10 +11,13 @@ export const amm = createSlice({ // creates the actions
     // trigger an action, action will have a function argument and that argument will update the state
         setContract: (state, action) => {
             state.contract = action.payload
-        },        
+        },
+        sharesLoaded: (state, action) => {
+            state.shares = action.payload
+        }   
     }
 })
 
-export const { setContract } = amm.actions;
+export const { setContract, sharesLoaded } = amm.actions;
 
 export default amm.reducer;
