@@ -15,7 +15,10 @@ import {
 
     import {
         setContract,
-        sharesLoaded   
+        sharesLoaded,
+        swapRequest,
+        swapSuccess,
+        swapFail
     } from './reducers/amm'
 
 import TOKEN_ABI from '../abis/Token.json';
@@ -58,7 +61,7 @@ export const loadTokens = async (provider, chainId, dispatch) => {
 export const loadAMM = async (provider, chainId, dispatch) => {
     const amm = new ethers.Contract(config[chainId].amm.address, AMM_ABI, provider)    
 
-    dispatch(setContract([amm]))
+    dispatch(setContract(amm))
     
     return amm
 }
@@ -69,14 +72,47 @@ export const loadAMM = async (provider, chainId, dispatch) => {
 export const loadBalances = async (amm, tokens, account, dispatch) => {
     const balance1 = await tokens[0].balanceOf(account)
     const balance2 = await tokens[1].balanceOf(account)
-
+    
     dispatch(balancesLoaded([
         ethers.utils.formatUnits(balance1.toString(), 'ether'),
         ethers.utils.formatUnits(balance2.toString(), 'ether')
     ]))
 
-    const shares = await amm.shares(account) // ERROR - Uncaught (in promise) TypeError: amm.shares is not a function
-                                            // at loadBalances (bundle.js:680:28)
-                                            // at async connectHandler (bundle.js:283:5)
+    const shares = await amm.shares(account)                                           
     dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
+}
+
+
+// -------------------------------------------------------------------------------------------
+// SWAP
+// 2 step process - Approve then Swap
+
+export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
+    try {
+    // Tell Redux the user is Swapping
+    dispatch(swapRequest())
+
+    let transaction
+
+    const signer = await provider.getSigner()
+
+    transaction = await token.connect(signer).approve(amm.address, amount)
+    await transaction.wait()
+
+    if (symbol === "SOB") {
+        transaction = await amm.connect(signer).swapToken1(amount)
+    } else {
+        transaction = await amm.connect(signer).swapToken2(amount)
+    }
+
+    await transaction.wait()
+
+    // Tell redux that swap has completed
+    dispatch(swapSuccess(transaction.hash))
+
+} catch (error) {
+
+    dispatch(swapFail())
+
+}
 }

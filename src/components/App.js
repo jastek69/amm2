@@ -35,7 +35,6 @@ function App() {
     // Initiate provider
     const provider = await loadProvider(dispatch)
 
-
     // Fetch current networks chainId (e.g. hard 31337)
     const chainId = await loadNetwork(provider, dispatch)
 

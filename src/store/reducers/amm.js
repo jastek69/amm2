@@ -5,8 +5,13 @@ export const amm = createSlice({ // creates the actions
     initialState: {
         contract: null,
         shares: 0,
-        swaps: []
-        },
+        swaps: [],
+        swapping: {
+            isSwapping: false,
+            isSuccess: false,
+            transactionHash: null
+        }
+    },
     reducers: {
     // trigger an action, action will have a function argument and that argument will update the state
         setContract: (state, action) => {
@@ -14,10 +19,31 @@ export const amm = createSlice({ // creates the actions
         },
         sharesLoaded: (state, action) => {
             state.shares = action.payload
-        }   
+        },
+        swapRequest: (state, action) => {
+            state.swapping.isSwapping = true
+            state.swapping.isSuccess = false
+            state.swapping.transactionHash = null
+        },
+        swapSuccess: (state, action) => {
+            state.swapping.isSwapping = false
+            state.swapping.isSuccess = true
+            state.swapping.transactionHash = action.payload
+        },
+        swapFail: (state, action) => {
+            state.swapping.isSwapping = false
+            state.swapping.isSuccess = false
+            state.swapping.transactionHash = null
+        }
     }
 })
 
-export const { setContract, sharesLoaded } = amm.actions;
+export const {
+    setContract,
+    sharesLoaded,
+    swapRequest,
+    swapSuccess,
+    swapFail
+} = amm.actions;
 
 export default amm.reducer;
