@@ -7,24 +7,26 @@ const tokens = (n) => {
 
 const ether = tokens
 
-describe('Token', () => {
+describe('Token', ()=> {        // tests go inside here ... see https://hardhat.org/tutorial/testing-contracts
   let token, accounts, deployer, receiver, exchange
-
-  beforeEach(async () => {
-    const Token = await ethers.getContractFactory('Token')
-    token = await Token.deploy('Dapp University', 'DAPP', '1000000')
-
-    accounts = await ethers.getSigners()
-    deployer = accounts[0]
-    receiver = accounts[1]
-    exchange = accounts[2]
+  
+  beforeEach(async() => {
+      // Fetch Token from Blockchain
+      const Token = await ethers.getContractFactory('Token') // gets the actual Contract
+      token = await Token.deploy('Sobek', 'SOB', '1000000')    // get Deployed instance of that contract
+      
+      // Get accounts in the test suite
+      accounts = await ethers.getSigners()
+      deployer = accounts[0]
+      receiver = accounts[1]
+      exchange = accounts[2]        
   })
 
   describe('Deployment', () => {
-    const name = 'Dapp University'
-    const symbol = 'DAPP'
-    const decimals = '18'
-    const totalSupply = tokens('1000000')
+      const name = 'Sobek'
+      const symbol = 'SOB'
+      const decimals = '18'
+      const totalSupply = tokens('1000000')
 
     it('has correct name', async () => {
       expect(await token.name()).to.equal(name)
