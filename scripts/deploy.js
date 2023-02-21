@@ -19,11 +19,11 @@ async function main() {
   await usd.deployed()  
   console.log(`USD Token deployed to: ${usd.address}\n`)
 
-  // Deploy AMM
-  const AMM = await hre.ethers.getContractFactory('AMM')
-  const amm = await AMM.deploy(sobek.address, usd.address)
+  // Deploy AMM2
+  const AMM2 = await hre.ethers.getContractFactory('AMM2')
+  const amm2 = await AMM2.deploy(sobek.address, usd.address)
 
-  console.log(`AMM contract deployed to: ${amm.address}\n`)
+  console.log(`AMM2 contract deployed to: ${amm2.address}\n`)
 
 }
 
