@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "./Token.sol";
 
-// AMM will do the following:
+// AMM2 will do the following:
 // [X] Manage Poll
 // [X] Manage Deposits
 // {X] Facilitates Swaps (i.e. Trades)
 // [X] Manage Withdraws
 
-contract AMM {
+contract AMM2 {
     Token public token1;
     Token public token2;
 
