@@ -36,10 +36,10 @@ const Swap = () => {
     const symbols = useSelector(state => state.tokens.symbols)
     const balances = useSelector(state => state.tokens.balances)
 
-    const amm = useSelector(state => state.amm.contract)
-    const isSwapping = useSelector(state => state.amm.swapping.isSwapping)
-    const isSuccess = useSelector(state => state.amm.swapping.isSuccess)
-    const transactionHash = useSelector(state => state.amm.swapping.transactionHash)
+    const amm2 = useSelector(state => state.amm2.contract)
+    const isSwapping = useSelector(state => state.amm2.swapping.isSwapping)
+    const isSuccess = useSelector(state => state.amm2.swapping.isSuccess)
+    const transactionHash = useSelector(state => state.amm2.swapping.transactionHash)
 
     const dispatch = useDispatch()
 
@@ -58,7 +58,7 @@ const Swap = () => {
             setInputAmount(e.target.value)
 
             const _token1Amount = ethers.utils.parseUnits(e.target.value, 'ether')
-            const result = await amm.calculateToken1Swap(_token1Amount)
+            const result = await amm2.calculateToken1Swap(_token1Amount)
             const _token2Amount = ethers.utils.formatUnits(result.toString(), 'ether')
 
             setOutputAmount(_token2Amount.toString())
@@ -67,7 +67,7 @@ const Swap = () => {
             setInputAmount(e.target.value)
 
             const _token2Amount = ethers.utils.parseUnits(e.target.value, 'ether')
-            const result = await amm.calculateToken2Swap(_token2Amount)
+            const result = await amm2.calculateToken2Swap(_token2Amount)
             const _token1Amount = ethers.utils.formatUnits(result.toString(), 'ether')
 
             setOutputAmount(_token1Amount.toString())
@@ -88,12 +88,12 @@ const Swap = () => {
 
         // Swap token depending upon which one we're doing ...
         if (inputToken === "SOB") {
-            await swap(provider, amm, tokens[0], inputToken, _inputAmount, dispatch)
+            await swap(provider, amm2, tokens[0], inputToken, _inputAmount, dispatch)
         } else {
-            await swap(provider, amm, tokens[1], inputToken, _inputAmount, dispatch)
+            await swap(provider, amm2, tokens[1], inputToken, _inputAmount, dispatch)
         }
 
-        await loadBalances(amm, tokens, account, dispatch)
+        await loadBalances(amm2, tokens, account, dispatch)
         await getPrice()
 
         setShowAlert(true)
@@ -106,9 +106,9 @@ const Swap = () => {
         }
 
         if (inputToken === 'SOB') {
-            setPrice(await amm.token2Balance() / await amm.token1Balance())
+            setPrice(await amm2.token2Balance() / await amm2.token1Balance())
         } else {            
-           setPrice(await amm.token1Balance() / await amm.token2Balance())
+           setPrice(await amm2.token1Balance() / await amm2.token2Balance())
         }
     }
 

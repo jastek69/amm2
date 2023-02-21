@@ -23,15 +23,15 @@ const Withdraw = () => {
     const provider = useSelector(state => state.provider.connection)
     const account = useSelector(state => state.provider.account)
 
-    const shares = useSelector(state => state.amm.shares)
+    const shares = useSelector(state => state.amm2.shares)
 
     const tokens = useSelector(state => state.tokens.contracts)
     const balances = useSelector(state => state.tokens.balances)
 
-    const amm = useSelector(state => state.amm.contract)
-    const isWithdrawing = useSelector(state => state.amm.withdrawing.isWithdrawing)
-    const isSuccess = useSelector(state => state.amm.withdrawing.isSuccess)
-    const transactionHash = useSelector(state => state.amm.withdrawing.transactionHash)
+    const amm2 = useSelector(state => state.amm2.contract)
+    const isWithdrawing = useSelector(state => state.amm2.withdrawing.isWithdrawing)
+    const isSuccess = useSelector(state => state.amm2.withdrawing.isSuccess)
+    const transactionHash = useSelector(state => state.amm2.withdrawing.transactionHash)
     
     const dispatch = useDispatch()
 
@@ -44,12 +44,12 @@ const Withdraw = () => {
 
         await removeLiquidity(
             provider,
-            amm,
+            amm2,
             _shares,
             dispatch
         )
 
-        await loadBalances(amm, tokens, account, dispatch)
+        await loadBalances(amm2, tokens, account, dispatch)
 
         setShowAlert(true)
         setAmount(0)

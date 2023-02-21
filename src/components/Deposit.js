@@ -28,10 +28,10 @@ const Deposit = () => {
     const symbols = useSelector(state => state.tokens.symbols)
     const balances = useSelector(state => state.tokens.balances)
 
-    const amm = useSelector(state => state.amm.contract)
-    const isDepositing = useSelector(state => state.amm.depositing.isDepositing)
-    const isSuccess = useSelector(state => state.amm.depositing.isSuccess)
-    const transactionHash = useSelector(state => state.amm.depositing.transactionHash)
+    const amm2 = useSelector(state => state.amm2.contract)
+    const isDepositing = useSelector(state => state.amm2.depositing.isDepositing)
+    const isSuccess = useSelector(state => state.amm2.depositing.isSuccess)
+    const transactionHash = useSelector(state => state.amm2.depositing.transactionHash)
     const dispatch = useDispatch()
 
     const amountHandler = async (e) => {
@@ -40,7 +40,7 @@ const Deposit = () => {
 
             // Fetch value from chain
             const _token1Amount = ethers.utils.parseUnits(e.target.value, 'ether')
-            const result = await amm.calculateToken2Deposit(_token1Amount)
+            const result = await amm2.calculateToken2Deposit(_token1Amount)
             const _token2Amount = ethers.utils.formatUnits(result.toString(), 'ether')
             
             // Set Token 2 Amount
@@ -50,7 +50,7 @@ const Deposit = () => {
 
             // Fetch value from chain
             const _token2Amount = ethers.utils.parseUnits(e.target.value, 'ether')
-            const result = await amm.calculateToken1Deposit(_token2Amount)
+            const result = await amm2.calculateToken1Deposit(_token2Amount)
             const _token1Amount = ethers.utils.formatUnits(result.toString(), 'ether')
 
             // Set token 1 amount
@@ -68,13 +68,13 @@ const Deposit = () => {
 
         await addLiquidity(
             provider,
-            amm,
+            amm2,
             tokens,
             [_token1Amount, _token2Amount],
             dispatch
         )
 
-        await loadBalances(amm, tokens, account, dispatch)
+        await loadBalances(amm2, tokens, account, dispatch)
 
         setShowAlert(true)
     }

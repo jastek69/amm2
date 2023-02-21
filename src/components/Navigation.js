@@ -15,13 +15,13 @@ const Navigation = () => {
   const chainId = useSelector(state => state.provider.chainId)
   const account = useSelector(state => state.provider.account) 
   const tokens = useSelector(state => state.tokens.contracts)
-  const amm = useSelector(state => state.amm.contract)
+  const amm2 = useSelector(state => state.amm2.contract)
 
   const dispatch = useDispatch()
 
   const connectHandler = async () => {
     const account = await loadAccount(dispatch)
-    await loadBalances(amm, tokens, account, dispatch)
+    await loadBalances(amm2, tokens, account, dispatch)
   }
 
     const networkHandler = async (e) => {
@@ -40,7 +40,7 @@ const Navigation = () => {
         height="40"
         className="d-inline-block align-top mx-3"
       />
-      <Navbar.Brand href="#">SOBEK AMM</Navbar.Brand>
+      <Navbar.Brand href="#">AMM2</Navbar.Brand>
       <Navbar.Toggle aria-controls="nav" />
       <Navbar.Collapse id="nav" className="justify-content-end">
         <div className="d-flex justify-content-end mt-3">
