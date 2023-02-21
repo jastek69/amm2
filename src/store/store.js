@@ -2,13 +2,13 @@ import { configureStore } from '@reduxjs/toolkit'
 
 import provider from './reducers/provider'
 import tokens from './reducers/tokens'
-import amm from './reducers/amm'
+import amm2 from './reducers/amm2'
 
 export const store = configureStore({
     reducer: {
         provider,
         tokens,
-        amm
+        amm2
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

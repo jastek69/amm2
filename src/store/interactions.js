@@ -26,10 +26,10 @@ import {
         swapRequest,
         swapSuccess,
         swapFail        
-    } from './reducers/amm'
+    } from './reducers/amm2'
 
 import TOKEN_ABI from '../abis/Token.json';
-import AMM_ABI from '../abis/AMM.json';
+import AMM_ABI from '../abis/AMM2.json';
 import config from '../config.json';
 
 
@@ -66,17 +66,17 @@ export const loadTokens = async (provider, chainId, dispatch) => {
 }
 
 export const loadAMM = async (provider, chainId, dispatch) => {
-    const amm = new ethers.Contract(config[chainId].amm.address, AMM_ABI, provider)    
+    const amm2 = new ethers.Contract(config[chainId].amm2.address, AMM_ABI, provider)    
 
-    dispatch(setContract(amm))
+    dispatch(setContract(amm2))
     
-    return amm
+    return amm2
 }
 
 
 // -------------------------------------------------------------------------------------------
 // LOAD BALANCES & SHARES
-export const loadBalances = async (amm, tokens, account, dispatch) => {
+export const loadBalances = async (amm2, tokens, account, dispatch) => {
     const balance1 = await tokens[0].balanceOf(account)
     const balance2 = await tokens[1].balanceOf(account)
     
@@ -85,14 +85,14 @@ export const loadBalances = async (amm, tokens, account, dispatch) => {
         ethers.utils.formatUnits(balance2.toString(), 'ether')
     ]))
 
-    const shares = await amm.shares(account)                                           
+    const shares = await amm2.shares(account)                                           
     dispatch(sharesLoaded(ethers.utils.formatUnits(shares.toString(), 'ether')))
 }
 
 
 // -------------------------------------------------------------------------------------------
 // ADD LIQUIDITY
-export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => {
+export const addLiquidity = async (provider, amm2, tokens, amounts, dispatch) => {
     try {
         dispatch(depositRequest())
 
@@ -100,13 +100,13 @@ export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => 
 
         let transaction    
 
-        transaction = await tokens[0].connect(signer).approve(amm.address, amounts[0])
+        transaction = await tokens[0].connect(signer).approve(amm2.address, amounts[0])
         await transaction.wait()
 
-        transaction = await tokens[1].connect(signer).approve(amm.address, amounts[1])
+        transaction = await tokens[1].connect(signer).approve(amm2.address, amounts[1])
         await transaction.wait()
 
-        transaction = await amm.connect(signer).addLiquidity(amounts[0], amounts[1])
+        transaction = await amm2.connect(signer).addLiquidity(amounts[0], amounts[1])
         await transaction.wait()
 
         dispatch(depositSuccess(transaction.hash))
@@ -118,13 +118,13 @@ export const addLiquidity = async (provider, amm, tokens, amounts, dispatch) => 
 
 // -------------------------------------------------------------------------------------------
 // REMOVE LIQUIDITY
-export const removeLiquidity = async (provider, amm, shares, dispatch) => {
+export const removeLiquidity = async (provider, amm2, shares, dispatch) => {
     try {
         dispatch(withdrawRequest())
 
         const signer = await provider.getSigner()
 
-        let transaction = await amm.connect(signer).removeLiquidity(shares)
+        let transaction = await amm2.connect(signer).removeLiquidity(shares)
         await transaction.wait()
 
         dispatch(withdrawSuccess(transaction.hash))
@@ -139,7 +139,7 @@ export const removeLiquidity = async (provider, amm, shares, dispatch) => {
 // SWAP
 // 2 step process - Approve then Swap
 
-export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
+export const swap = async (provider, amm2, token, symbol, amount, dispatch) => {
     try {
     // Tell Redux the user is Swapping
     dispatch(swapRequest())
@@ -148,13 +148,13 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 
     const signer = await provider.getSigner()
 
-    transaction = await token.connect(signer).approve(amm.address, amount)
+    transaction = await token.connect(signer).approve(amm2.address, amount)
     await transaction.wait()
 
     if (symbol === "SOB") {
-        transaction = await amm.connect(signer).swapToken1(amount)
+        transaction = await amm2.connect(signer).swapToken1(amount)
     } else {
-        transaction = await amm.connect(signer).swapToken2(amount)
+        transaction = await amm2.connect(signer).swapToken2(amount)
     }
 
     await transaction.wait()
@@ -171,13 +171,13 @@ export const swap = async (provider, amm, token, symbol, amount, dispatch) => {
 // -------------------------------------------------------------------------------------------
 // LOAD ALL SWAPS
 
-export const loadAllSwaps = async (provider, amm, dispatch) => {
+export const loadAllSwaps = async (provider, amm2, dispatch) => {
 
     // Fetch Swaps from Blockchain
 
     const block = await provider.getBlockNumber()
 
-    const swapStream = await amm.queryFilter('Swap', 0, block)
+    const swapStream = await amm2.queryFilter('Swap', 0, block)
     const swaps = swapStream.map(event => {
         return { hash: event.transactionHash, args: event.args }
     })

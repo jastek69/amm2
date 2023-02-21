@@ -1,8 +1,7 @@
 import { createSelector } from 'reselect'
-import { swap } from './interactions'
 
 const tokens = state => state.tokens.contracts
-const swaps = state => state.amm.swaps
+const swaps = state => state.amm2.swaps
 
 
 export const chartSelector = createSelector(swaps, tokens, (swaps, tokens) => {

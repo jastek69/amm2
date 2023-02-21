@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const amm = createSlice({ // creates the actions
-    name: 'amm',
+export const amm2 = createSlice({ // creates the actions
+    name: 'amm2',
     initialState: {
         contract: null,
         shares: 0,
@@ -97,6 +97,6 @@ export const {
     swapRequest,
     swapSuccess,
     swapFail
-} = amm.actions;
+} = amm2.actions;
 
-export default amm.reducer;
+export default amm2.reducer;
